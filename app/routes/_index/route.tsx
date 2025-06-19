@@ -1,5 +1,4 @@
 import type { LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { redirect } from "@remix-run/cloudflare";
 import { Form, useLoaderData } from "@remix-run/react";
 
 import { shopify } from "../../shopify.server";
@@ -10,6 +9,7 @@ export const loader = async ({ request, context }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
 
   if (url.searchParams.get("shop")) {
+    const { redirect } = await shopify(context).authenticate.admin(request);
     throw redirect(`/app?${url.searchParams.toString()}`);
   }
 

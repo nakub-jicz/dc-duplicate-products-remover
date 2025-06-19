@@ -4,11 +4,20 @@ import { createRequestHandler, type ServerBuild } from "@remix-run/cloudflare";
 import * as build from "./build/server"; // eslint-disable-line import/no-unresolved
 import { getLoadContext } from "./load-context";
 
+interface Env {
+  SHOPIFY_API_KEY: string;
+  SHOPIFY_API_SECRET: string;
+  SHOPIFY_APP_URL: string;
+  SCOPES: string;
+  DATABASE_URL: string;
+  DIRECT_URL: string;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleRemixRequest = createRequestHandler(build as any as ServerBuild);
 
 export default {
-  async fetch(request, env, ctx) {
+  async fetch(request: Request, env: Env, ctx: any) {
     try {
       console.log("Incoming request method:", request.method);
       const loadContext = getLoadContext({

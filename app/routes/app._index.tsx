@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/cloudflare";
-import { json, redirect } from "@remix-run/cloudflare";
+import { json } from "@remix-run/cloudflare";
 import { useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { Frame, Toast } from "@shopify/polaris";
@@ -51,7 +51,7 @@ export const loader = async ({ request, context }: LoaderFunctionArgs) => {
 
 // Action. Sprawdza, co ma zrobić i deleguje do serwisu.
 export async function action({ request, context }: ActionFunctionArgs) {
-  const { admin } = await shopify(context).authenticate.admin(request);
+  const { admin, redirect } = await shopify(context).authenticate.admin(request);
   const formData = await request.formData();
   const action = formData.get('_action');
   const url = new URL(request.url);

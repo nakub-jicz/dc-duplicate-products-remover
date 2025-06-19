@@ -4,10 +4,11 @@
  * For more information, see https://remix.run/file-conventions/entry.server
  */
 
-import type { AppLoadContext, EntryContext } from "@remix-run/node";
+import type { AppLoadContext, EntryContext } from "@remix-run/cloudflare";
 import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
+import { shopify } from "./shopify.server";
 
 const ABORT_DELAY = 5000;
 
@@ -24,6 +25,8 @@ export default async function handleRequest(
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), ABORT_DELAY);
 
+  // Add Shopify app security headers
+  shopify(loadContext).addDocumentResponseHeaders(request, responseHeaders);
 
   const body = await renderToReadableStream(
     <RemixServer

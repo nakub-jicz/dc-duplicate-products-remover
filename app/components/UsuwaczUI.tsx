@@ -1,9 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
 import type { GrupaZduplikowanychProduktow } from '../types/produkty';
-import { Form, useNavigate, useSubmit } from '@remix-run/react';
+import { Form, useSubmit, useNavigate } from '@remix-run/react';
 import {
     Page, Card, BlockStack, Button, ResourceList, Thumbnail, Text, Checkbox,
-    Box, InlineStack, Collapsible, Icon, InlineGrid, Tabs, Popover, ActionList
+    Box, InlineStack, Collapsible, Icon, InlineGrid, Tabs, Popover, ActionList,
+    Link
 } from "@shopify/polaris";
 import {
     DuplicateIcon, ChevronDownIcon, DeleteIcon,
@@ -23,12 +24,18 @@ interface UsuwaczUIProps {
 }
 
 export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, statystyki }: UsuwaczUIProps) {
-    const navigate = useNavigate();
     const submit = useSubmit();
+    const navigate = useNavigate();
     const [produktyDoUsuniecia, setProduktyDoUsuniecia] = useState<Set<string>>(new Set());
     const [rozwinieteId, setRozwinieteId] = useState<Set<string>>(new Set());
     const [popoverAktywny, setPopoverAktywny] = useState(false);
     const [aktywnePopovery, setAktywnePopovery] = useState<Set<string>>(new Set());
+
+    const handleTabClick = useCallback((tab: string) => {
+        const url = new URL(window.location.href);
+        url.searchParams.set('tab', tab);
+        navigate(url.pathname + url.search, { replace: true });
+    }, [navigate]);
 
     // Tabs definition
     const taby = [
@@ -187,56 +194,56 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                             <Button
                                                 pressed={aktywnyTab === 'tytul'}
                                                 icon={ProductFilledIcon}
-                                                onClick={() => navigate('/app?tab=tytul')}
                                                 variant="tertiary"
+                                                onClick={() => handleTabClick('tytul')}
                                             >
                                                 Title
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'sku'}
                                                 icon={BarcodeIcon}
-                                                onClick={() => navigate('/app?tab=sku')}
                                                 variant="tertiary"
+                                                onClick={() => handleTabClick('sku')}
                                             >
                                                 SKU
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'tytul_sku'}
                                                 icon={DuplicateIconAlt}
-                                                onClick={() => navigate('/app?tab=tytul_sku')}
                                                 variant="tertiary"
+                                                onClick={() => handleTabClick('tytul_sku')}
                                             >
                                                 Title + SKU
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'vendor'}
                                                 icon={AlertDiamondIcon}
-                                                onClick={() => navigate('/app?tab=vendor')}
                                                 variant="tertiary"
+                                                onClick={() => handleTabClick('vendor')}
                                             >
                                                 Vendor
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'barcode'}
                                                 icon={BarcodeIcon}
-                                                onClick={() => navigate('/app?tab=barcode')}
                                                 variant="tertiary"
+                                                onClick={() => handleTabClick('barcode')}
                                             >
                                                 Barcode
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'tytul_barcode'}
                                                 icon={DuplicateIconAlt}
-                                                onClick={() => navigate('/app?tab=tytul_barcode')}
                                                 variant="tertiary"
+                                                onClick={() => handleTabClick('tytul_barcode')}
                                             >
                                                 Title + Barcode
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'sku_barcode'}
                                                 icon={DuplicateIconAlt}
-                                                onClick={() => navigate('/app?tab=sku_barcode')}
                                                 variant="tertiary"
+                                                onClick={() => handleTabClick('sku_barcode')}
                                             >
                                                 SKU + Barcode
                                             </Button>
@@ -277,56 +284,56 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                             <Button
                                                 pressed={aktywnyTab === 'tytul'}
                                                 icon={ProductFilledIcon}
-                                                onClick={() => navigate('/app?tab=tytul')}
                                                 variant="tertiary"
+                                                onClick={() => handleTabClick('tytul')}
                                             >
                                                 Title
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'sku'}
                                                 icon={BarcodeIcon}
-                                                onClick={() => navigate('/app?tab=sku')}
                                                 variant="tertiary"
+                                                onClick={() => handleTabClick('sku')}
                                             >
                                                 SKU
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'tytul_sku'}
                                                 icon={DuplicateIconAlt}
-                                                onClick={() => navigate('/app?tab=tytul_sku')}
                                                 variant="tertiary"
+                                                onClick={() => handleTabClick('tytul_sku')}
                                             >
                                                 Title + SKU
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'vendor'}
                                                 icon={AlertDiamondIcon}
-                                                onClick={() => navigate('/app?tab=vendor')}
                                                 variant="tertiary"
+                                                onClick={() => handleTabClick('vendor')}
                                             >
                                                 Vendor
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'barcode'}
                                                 icon={BarcodeIcon}
-                                                onClick={() => navigate('/app?tab=barcode')}
                                                 variant="tertiary"
+                                                onClick={() => handleTabClick('barcode')}
                                             >
                                                 Barcode
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'tytul_barcode'}
                                                 icon={DuplicateIconAlt}
-                                                onClick={() => navigate('/app?tab=tytul_barcode')}
                                                 variant="tertiary"
+                                                onClick={() => handleTabClick('tytul_barcode')}
                                             >
                                                 Title + Barcode
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'sku_barcode'}
                                                 icon={DuplicateIconAlt}
-                                                onClick={() => navigate('/app?tab=sku_barcode')}
                                                 variant="tertiary"
+                                                onClick={() => handleTabClick('sku_barcode')}
                                             >
                                                 SKU + Barcode
                                             </Button>
@@ -408,56 +415,56 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                     <Button
                                                         pressed={aktywnyTab === 'tytul'}
                                                         icon={ProductFilledIcon}
-                                                        onClick={() => navigate('/app?tab=tytul')}
                                                         variant="tertiary"
+                                                        onClick={() => handleTabClick('tytul')}
                                                     >
                                                         Title
                                                     </Button>
                                                     <Button
                                                         pressed={aktywnyTab === 'sku'}
                                                         icon={BarcodeIcon}
-                                                        onClick={() => navigate('/app?tab=sku')}
                                                         variant="tertiary"
+                                                        onClick={() => handleTabClick('sku')}
                                                     >
                                                         SKU
                                                     </Button>
                                                     <Button
                                                         pressed={aktywnyTab === 'tytul_sku'}
                                                         icon={DuplicateIconAlt}
-                                                        onClick={() => navigate('/app?tab=tytul_sku')}
                                                         variant="tertiary"
+                                                        onClick={() => handleTabClick('tytul_sku')}
                                                     >
                                                         Title + SKU
                                                     </Button>
                                                     <Button
                                                         pressed={aktywnyTab === 'vendor'}
                                                         icon={AlertDiamondIcon}
-                                                        onClick={() => navigate('/app?tab=vendor')}
                                                         variant="tertiary"
+                                                        onClick={() => handleTabClick('vendor')}
                                                     >
                                                         Vendor
                                                     </Button>
                                                     <Button
                                                         pressed={aktywnyTab === 'barcode'}
                                                         icon={BarcodeIcon}
-                                                        onClick={() => navigate('/app?tab=barcode')}
                                                         variant="tertiary"
+                                                        onClick={() => handleTabClick('barcode')}
                                                     >
                                                         Barcode
                                                     </Button>
                                                     <Button
                                                         pressed={aktywnyTab === 'tytul_barcode'}
                                                         icon={DuplicateIconAlt}
-                                                        onClick={() => navigate('/app?tab=tytul_barcode')}
                                                         variant="tertiary"
+                                                        onClick={() => handleTabClick('tytul_barcode')}
                                                     >
                                                         Title + Barcode
                                                     </Button>
                                                     <Button
                                                         pressed={aktywnyTab === 'sku_barcode'}
                                                         icon={DuplicateIconAlt}
-                                                        onClick={() => navigate('/app?tab=sku_barcode')}
                                                         variant="tertiary"
+                                                        onClick={() => handleTabClick('sku_barcode')}
                                                     >
                                                         SKU + Barcode
                                                     </Button>
