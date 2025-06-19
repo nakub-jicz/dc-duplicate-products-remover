@@ -27,6 +27,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
     const [produktyDoUsuniecia, setProduktyDoUsuniecia] = useState<Set<string>>(new Set());
     const [rozwinieteId, setRozwinieteId] = useState<Set<string>>(new Set());
     const [popoverAktywny, setPopoverAktywny] = useState(false);
+    const [aktywnePopovery, setAktywnePopovery] = useState<Set<string>>(new Set());
 
     // Definicja tabów
     const taby = [
@@ -270,7 +271,76 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                         <BlockStack gap="400">
                                                             <InlineStack align="space-between" blockAlign="center">
                                                                 <Text as="span" variant="headingMd">Klony do usunięcia:</Text>
-                                                                <Button size='slim' onClick={() => zaznaczWszystkieWGrupie(grupa)}>Zaznacz wszystkie</Button>
+                                                                <Popover
+                                                                    active={aktywnePopovery.has(grupa.oryginal.id)}
+                                                                    activator={
+                                                                        <Button
+                                                                            onClick={() => {
+                                                                                setAktywnePopovery(prev => {
+                                                                                    const nowy = new Set(prev);
+                                                                                    if (nowy.has(grupa.oryginal.id)) {
+                                                                                        nowy.delete(grupa.oryginal.id);
+                                                                                    } else {
+                                                                                        nowy.add(grupa.oryginal.id);
+                                                                                    }
+                                                                                    return nowy;
+                                                                                });
+                                                                            }}
+                                                                            variant="tertiary"
+                                                                        >
+                                                                            Opcje zaznaczania
+                                                                        </Button>
+                                                                    }
+                                                                    onClose={() => setAktywnePopovery(prev => {
+                                                                        const nowy = new Set(prev);
+                                                                        nowy.delete(grupa.oryginal.id);
+                                                                        return nowy;
+                                                                    })}
+                                                                    preferredPosition="below"
+                                                                >
+                                                                    <ActionList
+                                                                        actionRole="menuitem"
+                                                                        items={[
+                                                                            {
+                                                                                content: 'Zaznacz wszystkie w tej grupie',
+                                                                                onAction: () => zaznaczWszystkieWGrupie(grupa)
+                                                                            },
+                                                                            {
+                                                                                content: 'Odznacz wszystkie w tej grupie',
+                                                                                onAction: () => {
+                                                                                    const idWszystkichDuplikatow = grupa.duplikatyDoUsuniecia.map(p => p.id);
+                                                                                    setProduktyDoUsuniecia(stan => {
+                                                                                        const nowyStan = new Set(stan);
+                                                                                        idWszystkichDuplikatow.forEach(id => nowyStan.delete(id));
+                                                                                        return nowyStan;
+                                                                                    });
+                                                                                }
+                                                                            },
+                                                                            {
+                                                                                content: 'Zaznacz najnowsze',
+                                                                                onAction: () => {
+                                                                                    const najnowszy = [...grupa.duplikatyDoUsuniecia].sort(
+                                                                                        (a, b) => new Date(b.dataUtworzenia).getTime() - new Date(a.dataUtworzenia).getTime()
+                                                                                    )[0];
+                                                                                    if (najnowszy) {
+                                                                                        setProduktyDoUsuniecia(stan => new Set([...stan, najnowszy.id]));
+                                                                                    }
+                                                                                }
+                                                                            },
+                                                                            {
+                                                                                content: 'Zaznacz najstarsze',
+                                                                                onAction: () => {
+                                                                                    const najstarszy = [...grupa.duplikatyDoUsuniecia].sort(
+                                                                                        (a, b) => new Date(a.dataUtworzenia).getTime() - new Date(b.dataUtworzenia).getTime()
+                                                                                    )[0];
+                                                                                    if (najstarszy) {
+                                                                                        setProduktyDoUsuniecia(stan => new Set([...stan, najstarszy.id]));
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        ]}
+                                                                    />
+                                                                </Popover>
                                                             </InlineStack>
 
                                                             {duplikatyDoUsuniecia.map(duplikat => (
