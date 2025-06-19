@@ -267,9 +267,9 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                     </InlineStack>
                                                 </div>
                                                 <Collapsible open={jestOtwarty} id={oryginal.id}>
-                                                    <Box padding="400" paddingBlockStart="0" background='bg-surface-secondary'>
+                                                    <Box padding="400" background='bg-surface-secondary'>
                                                         <BlockStack gap="400">
-                                                            <InlineStack align="space-between" blockAlign="center">
+                                                            <InlineStack align="space-between">
                                                                 <Text as="span" variant="headingMd">Klony do usunięcia:</Text>
                                                                 <Popover
                                                                     active={aktywnePopovery.has(grupa.oryginal.id)}
