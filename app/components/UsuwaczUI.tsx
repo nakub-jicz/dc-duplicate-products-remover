@@ -3,17 +3,25 @@ import type { GrupaZduplikowanychProduktow } from '../types/produkty';
 import { Form } from '@remix-run/react';
 import {
     Page, Card, BlockStack, Button, ResourceList, Thumbnail, Text, Checkbox,
-    Box, InlineStack, Collapsible, Icon, ChoiceList, type ButtonProps
+    Box, InlineStack, Collapsible, Icon, ChoiceList, InlineGrid
 } from "@shopify/polaris";
-import { DuplicateIcon, ChevronDownIcon, DeleteIcon } from '@shopify/polaris-icons';
+import {
+    DuplicateIcon, ChevronDownIcon, DeleteIcon,
+    ProductFilledIcon, DuplicateIcon as DuplicateIconAlt, AlertDiamondIcon
+} from '@shopify/polaris-icons';
 
 interface AnihilatorUIProps {
     grupyDuplikatow: GrupaZduplikowanychProduktow[];
     czyApkaMieliDane: boolean;
     kryteriaPoczatkowe: string[];
+    statystyki: {
+        liczbaProduktow: number;
+        liczbaGrupDuplikatow: number;
+        liczbaKlonowDoUsuniecia: number;
+    };
 }
 
-export function AnihilatorUI({ grupyDuplikatow, czyApkaMieliDane, kryteriaPoczatkowe }: AnihilatorUIProps) {
+export function AnihilatorUI({ grupyDuplikatow, czyApkaMieliDane, kryteriaPoczatkowe, statystyki }: AnihilatorUIProps) {
     const [otwarteId, setOtwarteId] = useState<Set<string>>(new Set());
     const [produktyDoUsuniecia, setProduktyDoUsuniecia] = useState<Set<string>>(new Set());
     const [wybraneKryteria, setWybraneKryteria] = useState<string[]>(kryteriaPoczatkowe);
@@ -57,6 +65,56 @@ export function AnihilatorUI({ grupyDuplikatow, czyApkaMieliDane, kryteriaPoczat
     return (
         <Page title="Anihilator Duplikatów" subtitle="Chirurgiczna precyzja w eliminacji cyfrowego ścierwa.">
             <BlockStack gap="500">
+                {/* --- PULPIT STATYSTYK (Poziom Strategiczny) --- */}
+                <Card roundedAbove="sm">
+                    <InlineGrid columns={{ xs: 1, sm: 3 }} gap="0">
+                        {/* Statystyka 1 */}
+                        <Box padding="400" borderInlineEndWidth="025" borderColor="border">
+                            <BlockStack gap="200" inlineAlign="start">
+                                <InlineStack gap="200" blockAlign="center">
+                                    <Icon source={ProductFilledIcon} tone="subdued" />
+                                    <Text as="h3" variant="headingSm" tone="subdued">
+                                        Produkty w sklepie
+                                    </Text>
+                                </InlineStack>
+                                <Text as="p" variant="headingXl" fontWeight="semibold">
+                                    {statystyki.liczbaProduktow}
+                                </Text>
+                            </BlockStack>
+                        </Box>
+
+                        {/* Statystyka 2 */}
+                        <Box padding="400" borderInlineEndWidth="025" borderColor="border">
+                            <BlockStack gap="200" inlineAlign="start">
+                                <InlineStack gap="200" blockAlign="center">
+                                    <Icon source={DuplicateIconAlt} tone="subdued" />
+                                    <Text as="h3" variant="headingSm" tone="subdued">
+                                        Grupy duplikatów
+                                    </Text>
+                                </InlineStack>
+                                <Text as="p" variant="headingXl" fontWeight="semibold">
+                                    {statystyki.liczbaGrupDuplikatow}
+                                </Text>
+                            </BlockStack>
+                        </Box>
+
+                        {/* Statystyka 3 */}
+                        <Box padding="400">
+                            <BlockStack gap="200" inlineAlign="start">
+                                <InlineStack gap="200" blockAlign="center">
+                                    <Icon source={AlertDiamondIcon} tone="critical" />
+                                    <Text as="h3" variant="headingSm" tone="critical">
+                                        Klony do anihilacji
+                                    </Text>
+                                </InlineStack>
+                                <Text as="p" variant="headingXl" fontWeight="semibold" tone="critical">
+                                    {statystyki.liczbaKlonowDoUsuniecia}
+                                </Text>
+                            </BlockStack>
+                        </Box>
+                    </InlineGrid>
+                </Card>
+
                 {/* --- PANEL KONFIGURACJI --- */}
                 <Card>
                     <Form method="post">

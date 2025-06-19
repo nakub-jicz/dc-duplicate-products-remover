@@ -28,11 +28,24 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const produkty = await pobierzWszystkieProdukty(admin as AdminApiContext);
 
   // Teraz, kiedy mamy produkty, pogrupujmy je.
-  // @ts-ignore - na razie olewamy, bo kryterium jest na sztywno, ale to do rozbudowy
   const grupyDuplikatow = znajdzWskazDuplikaty(produkty);
 
-  // Zwracamy pogrupowane duplikaty i kryteria, po których szukaliśmy, do komponentu UI.
-  return json({ grupyDuplikatow, kryteriaPoczatkowe: kryteriaParam.split(',') });
+  // Generujemy statystyki
+  const statystyki = {
+    liczbaProduktow: produkty.length,
+    liczbaGrupDuplikatow: grupyDuplikatow.length,
+    liczbaKlonowDoUsuniecia: grupyDuplikatow.reduce(
+      (suma, grupa) => suma + grupa.duplikatyDoUsuniecia.length,
+      0
+    ),
+  };
+
+  // Zwracamy pogrupowane duplikaty, kryteria i statystyki
+  return json({
+    grupyDuplikatow,
+    kryteriaPoczatkowe: kryteriaParam.split(','),
+    statystyki
+  });
 };
 
 // Action. Sprawdza, co ma zrobić i deleguje do serwisu.
@@ -73,7 +86,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 // Komponent Kontroler. Spina wszystko w całość. Jest klejem.
 export default function StronaUsuwacza() {
-  const { grupyDuplikatow, kryteriaPoczatkowe } = useLoaderData<typeof loader>();
+  const { grupyDuplikatow, kryteriaPoczatkowe, statystyki } = useLoaderData<typeof loader>();
   const nawigacja = useNavigation();
   const [searchParams] = useSearchParams();
   const app = useAppBridge();
@@ -81,7 +94,6 @@ export default function StronaUsuwacza() {
   const czyUsunieto = searchParams.get('usunieto') === 'true';
   const czyApkaMieliDane = nawigacja.state === 'loading' || nawigacja.state === 'submitting';
 
-  // Polaris Toast state
   const [showToast, setShowToast] = useState(czyUsunieto);
 
   useEffect(() => {
@@ -96,6 +108,7 @@ export default function StronaUsuwacza() {
         grupyDuplikatow={grupyDuplikatow}
         czyApkaMieliDane={czyApkaMieliDane}
         kryteriaPoczatkowe={kryteriaPoczatkowe}
+        statystyki={statystyki}
       />
       {showToast && (
         <Toast
