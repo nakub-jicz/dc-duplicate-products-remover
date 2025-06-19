@@ -8,7 +8,7 @@ import {
 import {
     DuplicateIcon, ChevronDownIcon, DeleteIcon,
     ProductFilledIcon, DuplicateIcon as DuplicateIconAlt, AlertDiamondIcon,
-    MenuHorizontalIcon
+    MenuHorizontalIcon, BarcodeIcon
 } from '@shopify/polaris-icons';
 
 interface UsuwaczUIProps {
@@ -249,6 +249,11 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                             <BlockStack>
                                                                 <Text as="span" variant="bodyMd" fontWeight="bold">{oryginal.tytul}</Text>
                                                                 <Text as="span" tone="subdued">Oryginał (Najstarszy)</Text>
+                                                                {grupa.zduplikowanaWartosc && (
+                                                                    <Text as="span" tone="subdued">
+                                                                        Współdzielone {aktywnyTab === 'sku' ? 'SKU' : aktywnyTab === 'vendor' ? 'Dostawca' : 'Wartość'}: "{grupa.zduplikowanaWartosc}"
+                                                                    </Text>
+                                                                )}
                                                             </BlockStack>
                                                         </InlineStack>
                                                         <InlineStack blockAlign="center" gap="300">
