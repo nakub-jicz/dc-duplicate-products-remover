@@ -292,3 +292,58 @@ export async function usunWybraneProdukty(admin: AdminApiContext, idDoUsuniecia:
     }
   })
 }
+
+/**
+ * Aktualizuje grupę duplikatów po usunięciu oryginału.
+ * Nowym oryginałem zostaje następny najstarszy produkt.
+ */
+function aktualizujGrupePoDeleciePierwotnego(grupa: GrupaZduplikowanychProduktow): GrupaZduplikowanychProduktow | null {
+  if (grupa.duplikatyDoUsuniecia.length === 0) {
+    return null; // Jeśli nie ma więcej produktów, grupa zostanie usunięta
+  }
+
+  // Sortujemy wszystkie produkty (włącznie z usuniętym oryginałem) według daty utworzenia
+  const wszystkieProdukty = [...grupa.duplikatyDoUsuniecia].sort(
+    (a, b) => new Date(a.dataUtworzenia).getTime() - new Date(b.dataUtworzenia).getTime()
+  );
+
+  // Pierwszy produkt staje się nowym oryginałem
+  const nowyOryginal = wszystkieProdukty[0];
+  const noweDuplikaty = wszystkieProdukty.slice(1);
+
+  return {
+    oryginal: nowyOryginal,
+    duplikatyDoUsuniecia: noweDuplikaty,
+    zduplikowanaWartosc: grupa.zduplikowanaWartosc
+  };
+}
+
+/**
+ * Usuwa produkt i aktualizuje strukturę grupy jeśli to był oryginał.
+ */
+export async function usunProduktIZaktualizujGrupe(
+  admin: AdminApiContext,
+  idProduktu: string,
+  grupa: GrupaZduplikowanychProduktow
+): Promise<GrupaZduplikowanychProduktow | null> {
+  // Usuwamy produkt
+  const odpowiedz = await admin.graphql(USUN_PRODUKT_MUTATION, {
+    variables: { id: idProduktu }
+  });
+  const wynik = await odpowiedz.json();
+
+  if (wynik.data?.productDelete?.userErrors?.length > 0) {
+    throw new Error(`Błąd podczas usuwania produktu: ${wynik.data.productDelete.userErrors[0].message}`);
+  }
+
+  // Jeśli usunięto oryginał, aktualizujemy grupę
+  if (idProduktu === grupa.oryginal.id) {
+    return aktualizujGrupePoDeleciePierwotnego(grupa);
+  }
+
+  // Jeśli usunięto duplikat, aktualizujemy listę duplikatów
+  return {
+    ...grupa,
+    duplikatyDoUsuniecia: grupa.duplikatyDoUsuniecia.filter(p => p.id !== idProduktu)
+  };
+}

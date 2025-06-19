@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import type { GrupaZduplikowanychProduktow } from '../types/produkty';
-import { Form, useNavigate } from '@remix-run/react';
+import { Form, useNavigate, useSubmit } from '@remix-run/react';
 import {
     Page, Card, BlockStack, Button, ResourceList, Thumbnail, Text, Checkbox,
     Box, InlineStack, Collapsible, Icon, InlineGrid, Tabs, Popover, ActionList
@@ -24,6 +24,7 @@ interface UsuwaczUIProps {
 
 export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, statystyki }: UsuwaczUIProps) {
     const navigate = useNavigate();
+    const submit = useSubmit();
     const [produktyDoUsuniecia, setProduktyDoUsuniecia] = useState<Set<string>>(new Set());
     const [rozwinieteId, setRozwinieteId] = useState<Set<string>>(new Set());
     const [popoverAktywny, setPopoverAktywny] = useState(false);
@@ -113,6 +114,13 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
             onAction: odznaczWszystko,
         },
     ];
+
+    const usunOryginal = useCallback((grupa: GrupaZduplikowanychProduktow) => {
+        const formData = new FormData();
+        formData.append('_action', 'usun_oryginal');
+        formData.append('idGrupy', grupa.oryginal.id);
+        submit(formData, { method: 'post' });
+    }, [submit]);
 
     return (
         <Page title="Anihilator Duplikatów" subtitle="Chirurgiczna precyzja w eliminacji cyfrowego ścierwa.">
@@ -382,7 +390,12 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                         items={akcje}
                                                     />
                                                 </Popover>
-                                                <Button variant="primary" tone="critical" submit disabled={produktyDoUsuniecia.size === 0} loading={czyApkaMieliDane}>
+                                                <Button
+                                                    variant="primary"
+                                                    tone="critical"
+                                                    submit
+                                                    disabled={produktyDoUsuniecia.size === 0 || czyApkaMieliDane}
+                                                >
                                                     Anihiluj Zaznaczone ({produktyDoUsuniecia.size.toString()})
                                                 </Button>
                                             </InlineStack>
@@ -478,6 +491,15 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                             </BlockStack>
                                                         </InlineStack>
                                                         <InlineStack blockAlign="center" gap="300">
+                                                            <Button
+                                                                icon={DeleteIcon}
+                                                                tone="critical"
+                                                                variant="tertiary"
+                                                                disabled={czyApkaMieliDane}
+                                                                onClick={() => usunOryginal(grupa)}
+                                                            >
+                                                                Usuń oryginał
+                                                            </Button>
                                                             <Icon source={DuplicateIcon} />
                                                             <Text as="span" tone="subdued">{duplikatyDoUsuniecia.length} duplikatów</Text>
                                                             <div style={{ transform: jestOtwarty ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }}>

@@ -13,7 +13,8 @@ import { UsuwaczUI } from "../components/UsuwaczUI";
 import {
   pobierzWszystkieProdukty,
   znajdzWskazDuplikaty,
-  usunWybraneProdukty
+  usunWybraneProdukty,
+  usunProduktIZaktualizujGrupe
 } from "../services/produkty.server";
 
 // Loader. Woła serwis, dostaje dane, zwraca. Koniec pierdolenia.
@@ -49,29 +50,39 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 // Action. Sprawdza, co ma zrobić i deleguje do serwisu.
-export const action = async ({ request }: ActionFunctionArgs) => {
+export async function action({ request }: ActionFunctionArgs) {
   const { admin } = await authenticate.admin(request);
   const formData = await request.formData();
-  const actionType = formData.get('_action');
+  const action = formData.get('_action');
+  const url = new URL(request.url);
+  const aktywnyTab = url.searchParams.get('tab') || 'tytul';
 
-  switch (actionType) {
-    // AKCJA 'USUŃ' - Czas na rozpierdol
-    case 'usun': {
-      const idDoUsuniecia = formData.getAll('idDoUsuniecia[]').map(String);
-      if (idDoUsuniecia.length > 0) {
-        // Delegujemy zadanie anihilacji do naszego serwisu.
-        await usunWybraneProdukty(admin as AdminApiContext, idDoUsuniecia);
-        // Przekierowujemy z flagą, żeby pokazać powiadomienie o sukcesie.
-        return redirect('/app?usunieto=true');
-      }
-      // Jak ktoś wysłał pusty formularz, to go olej.
-      return json({ error: 'Nie wybrano żadnych produktów do usunięcia.' });
+  if (action === 'usun') {
+    const idDoUsuniecia = formData.getAll('idDoUsuniecia[]');
+    await usunWybraneProdukty(admin as AdminApiContext, idDoUsuniecia as string[]);
+    return redirect(`/app?tab=${aktywnyTab}`);
+  }
+
+  if (action === 'usun_oryginal') {
+    const idGrupy = formData.get('idGrupy') as string;
+
+    // Pobieramy aktualne dane
+    const produkty = await pobierzWszystkieProdukty(admin as AdminApiContext);
+    const grupyDuplikatow = znajdzWskazDuplikaty(produkty, aktywnyTab);
+
+    // Znajdujemy odpowiednią grupę
+    const grupa = grupyDuplikatow.find(g => g.oryginal.id === idGrupy);
+
+    if (grupa) {
+      // Usuwamy oryginał i aktualizujemy grupę
+      await usunProduktIZaktualizujGrupe(admin as AdminApiContext, idGrupy, grupa);
     }
 
-    default:
-      return json({ error: 'Nieznana akcja, nie próbuj mnie hackować, gnoju.' }, { status: 400 });
+    return redirect(`/app?tab=${aktywnyTab}`);
   }
-};
+
+  return redirect(`/app?tab=${aktywnyTab}`);
+}
 
 // Komponent Kontroler. Spina wszystko w całość. Jest klejem.
 export default function StronaUsuwacza() {
