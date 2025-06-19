@@ -31,10 +31,13 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
 
     // Definicja tabów
     const taby = [
-        { id: 'tytul', content: 'Tytuł' },
-        { id: 'sku', content: 'SKU' },
-        { id: 'tytul_sku', content: 'Tytuł + SKU' },
-        { id: 'vendor', content: 'Dostawca' }
+        { id: 'tytul', content: 'Tytuł', icon: <Icon source={ProductFilledIcon} /> },
+        { id: 'sku', content: 'SKU', icon: <Icon source={BarcodeIcon} /> },
+        { id: 'tytul_sku', content: 'Tytuł + SKU', icon: <Icon source={DuplicateIconAlt} /> },
+        { id: 'vendor', content: 'Dostawca', icon: <Icon source={AlertDiamondIcon} /> },
+        { id: 'barcode', content: 'Barcode', icon: <Icon source={BarcodeIcon} /> },
+        { id: 'tytul_barcode', content: 'Tytuł + Barcode', icon: <Icon source={DuplicateIconAlt} /> },
+        { id: 'sku_barcode', content: 'SKU + Barcode', icon: <Icon source={DuplicateIconAlt} /> }
     ];
 
     // Reset zaznaczonych produktów po pomyślnym usunięciu
@@ -190,7 +193,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                 <input type="hidden" name="idDoUsuniecia[]" value={id} key={id} />
                             ))}
 
-                            <BlockStack gap="0">
+                            <BlockStack gap="400">
                                 {/* Nagłówek z tabami i akcjami */}
                                 <Box padding="400">
                                     <BlockStack gap="400">
@@ -223,14 +226,68 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                         </InlineStack>
 
                                         {/* Taby */}
-                                        <Tabs
-                                            tabs={taby}
-                                            selected={taby.findIndex(tab => tab.id === aktywnyTab)}
-                                            onSelect={(selectedTabIndex) => {
-                                                const wybranyTab = taby[selectedTabIndex];
-                                                navigate(`/app?tab=${wybranyTab.id}`);
-                                            }}
-                                        />
+                                        <Box padding="0">
+                                            <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                                                <InlineStack gap="200" wrap={false} align="center">
+                                                    <Button
+                                                        pressed={aktywnyTab === 'tytul'}
+                                                        icon={ProductFilledIcon}
+                                                        onClick={() => navigate('/app?tab=tytul')}
+                                                        variant="tertiary"
+                                                    >
+                                                        Tytuł
+                                                    </Button>
+                                                    <Button
+                                                        pressed={aktywnyTab === 'sku'}
+                                                        icon={BarcodeIcon}
+                                                        onClick={() => navigate('/app?tab=sku')}
+                                                        variant="tertiary"
+                                                    >
+                                                        SKU
+                                                    </Button>
+                                                    <Button
+                                                        pressed={aktywnyTab === 'tytul_sku'}
+                                                        icon={DuplicateIconAlt}
+                                                        onClick={() => navigate('/app?tab=tytul_sku')}
+                                                        variant="tertiary"
+                                                    >
+                                                        Tytuł + SKU
+                                                    </Button>
+                                                    <Button
+                                                        pressed={aktywnyTab === 'vendor'}
+                                                        icon={AlertDiamondIcon}
+                                                        onClick={() => navigate('/app?tab=vendor')}
+                                                        variant="tertiary"
+                                                    >
+                                                        Dostawca
+                                                    </Button>
+                                                    <Button
+                                                        pressed={aktywnyTab === 'barcode'}
+                                                        icon={BarcodeIcon}
+                                                        onClick={() => navigate('/app?tab=barcode')}
+                                                        variant="tertiary"
+                                                    >
+                                                        Barcode
+                                                    </Button>
+                                                    <Button
+                                                        pressed={aktywnyTab === 'tytul_barcode'}
+                                                        icon={DuplicateIconAlt}
+                                                        onClick={() => navigate('/app?tab=tytul_barcode')}
+                                                        variant="tertiary"
+                                                    >
+                                                        Tytuł + Barcode
+                                                    </Button>
+                                                    <Button
+                                                        pressed={aktywnyTab === 'sku_barcode'}
+                                                        icon={DuplicateIconAlt}
+                                                        onClick={() => navigate('/app?tab=sku_barcode')}
+                                                        variant="tertiary"
+                                                    >
+                                                        SKU + Barcode
+                                                    </Button>
+                                                </InlineStack>
+                                            </div>
+                                        </Box>
                                     </BlockStack>
                                 </Box>
 
