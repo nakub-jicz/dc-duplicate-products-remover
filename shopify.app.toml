@@ -1,9 +1,9 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "2cd731183a2b400f2a1aa2c8c37d1e77"
-name = "DC Duplicate Products Remover"
-handle = "dc-duplicate-products-remover"
-application_url = "https://allow-yn-destiny-malaysia.trycloudflare.com"
+name = "DC Remove Duplicates"
+handle = "dc-remove-duplicates"
+application_url = "https://skins-jpeg-nav-mississippi.trycloudflare.com"
 embedded = true
 
 [build]
@@ -27,9 +27,9 @@ scopes = "read_products,write_products"
 
 [auth]
 redirect_urls = [
-  "https://allow-yn-destiny-malaysia.trycloudflare.com/auth/callback",
-  "https://allow-yn-destiny-malaysia.trycloudflare.com/auth/shopify/callback",
-  "https://allow-yn-destiny-malaysia.trycloudflare.com/api/auth/callback"
+  "https://skins-jpeg-nav-mississippi.trycloudflare.com/auth/callback",
+  "https://skins-jpeg-nav-mississippi.trycloudflare.com/auth/shopify/callback",
+  "https://skins-jpeg-nav-mississippi.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

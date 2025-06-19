@@ -30,14 +30,14 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
     const [popoverAktywny, setPopoverAktywny] = useState(false);
     const [aktywnePopovery, setAktywnePopovery] = useState<Set<string>>(new Set());
 
-    // Definicja tabów
+    // Tabs definition
     const taby = [
-        { id: 'tytul', content: 'Tytuł', icon: <Icon source={ProductFilledIcon} /> },
+        { id: 'tytul', content: 'Title', icon: <Icon source={ProductFilledIcon} /> },
         { id: 'sku', content: 'SKU', icon: <Icon source={BarcodeIcon} /> },
-        { id: 'tytul_sku', content: 'Tytuł + SKU', icon: <Icon source={DuplicateIconAlt} /> },
-        { id: 'vendor', content: 'Dostawca', icon: <Icon source={AlertDiamondIcon} /> },
+        { id: 'tytul_sku', content: 'Title + SKU', icon: <Icon source={DuplicateIconAlt} /> },
+        { id: 'vendor', content: 'Vendor', icon: <Icon source={AlertDiamondIcon} /> },
         { id: 'barcode', content: 'Barcode', icon: <Icon source={BarcodeIcon} /> },
-        { id: 'tytul_barcode', content: 'Tytuł + Barcode', icon: <Icon source={DuplicateIconAlt} /> },
+        { id: 'tytul_barcode', content: 'Title + Barcode', icon: <Icon source={DuplicateIconAlt} /> },
         { id: 'sku_barcode', content: 'SKU + Barcode', icon: <Icon source={DuplicateIconAlt} /> }
     ];
 
@@ -98,19 +98,19 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
 
     const akcje = [
         {
-            content: 'Rozwiń wszystko',
+            content: 'Expand all',
             onAction: rozwinWszystko,
         },
         {
-            content: 'Zwiń wszystko',
+            content: 'Collapse all',
             onAction: zwinWszystko,
         },
         {
-            content: 'Zaznacz wszystko',
+            content: 'Select all',
             onAction: zaznaczWszystko,
         },
         {
-            content: 'Odznacz wszystko',
+            content: 'Deselect all',
             onAction: odznaczWszystko,
         },
     ];
@@ -123,18 +123,18 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
     }, [submit]);
 
     return (
-        <Page title="Anihilator Duplikatów" subtitle="Chirurgiczna precyzja w eliminacji cyfrowego ścierwa.">
+        <Page title="DC Remove Duplicates" subtitle="Remove duplicate products with precision.">
             <BlockStack gap="500">
-                {/* --- PULPIT STATYSTYK (Poziom Strategiczny) --- */}
+                {/* --- STATS DASHBOARD --- */}
                 <Card roundedAbove="sm">
                     <InlineGrid columns={{ xs: 1, sm: 3 }} gap="0">
-                        {/* Statystyka 1 */}
+                        {/* Stat 1 */}
                         <Box padding="400" borderInlineEndWidth="025" borderColor="border">
                             <BlockStack gap="200" inlineAlign="start">
                                 <InlineStack gap="200" blockAlign="center">
                                     <Icon source={ProductFilledIcon} tone="subdued" />
                                     <Text as="h3" variant="headingSm" tone="subdued">
-                                        Produkty w sklepie
+                                        Products in store
                                     </Text>
                                 </InlineStack>
                                 <Text as="p" variant="headingXl" fontWeight="semibold">
@@ -143,13 +143,13 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                             </BlockStack>
                         </Box>
 
-                        {/* Statystyka 2 */}
+                        {/* Stat 2 */}
                         <Box padding="400" borderInlineEndWidth="025" borderColor="border">
                             <BlockStack gap="200" inlineAlign="start">
                                 <InlineStack gap="200" blockAlign="center">
                                     <Icon source={DuplicateIconAlt} tone="subdued" />
                                     <Text as="h3" variant="headingSm" tone="subdued">
-                                        Grupy duplikatów
+                                        Duplicate groups
                                     </Text>
                                 </InlineStack>
                                 <Text as="p" variant="headingXl" fontWeight="semibold">
@@ -158,13 +158,13 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                             </BlockStack>
                         </Box>
 
-                        {/* Statystyka 3 */}
+                        {/* Stat 3 */}
                         <Box padding="400">
                             <BlockStack gap="200" inlineAlign="start">
                                 <InlineStack gap="200" blockAlign="center">
                                     <Icon source={AlertDiamondIcon} tone="critical" />
                                     <Text as="h3" variant="headingSm" tone="critical">
-                                        Klony do anihilacji
+                                        Clones to remove
                                     </Text>
                                 </InlineStack>
                                 <Text as="p" variant="headingXl" fontWeight="semibold" tone="critical">
@@ -175,12 +175,12 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                     </InlineGrid>
                 </Card>
 
-                {/* --- KOMUNIKAT O SKANOWANIU --- */}
+                {/* --- SCANNING MESSAGE --- */}
                 {czyApkaMieliDane && grupyDuplikatow.length === 0 && (
                     <Card>
                         <Box padding="400">
                             <BlockStack gap="400">
-                                {/* Menu z opcjami wyszukiwania */}
+                                {/* Search options menu */}
                                 <Box padding="0">
                                     <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                                         <InlineStack gap="200" wrap={false} align="center">
@@ -190,7 +190,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                 onClick={() => navigate('/app?tab=tytul')}
                                                 variant="tertiary"
                                             >
-                                                Tytuł
+                                                Title
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'sku'}
@@ -206,7 +206,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                 onClick={() => navigate('/app?tab=tytul_sku')}
                                                 variant="tertiary"
                                             >
-                                                Tytuł + SKU
+                                                Title + SKU
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'vendor'}
@@ -214,7 +214,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                 onClick={() => navigate('/app?tab=vendor')}
                                                 variant="tertiary"
                                             >
-                                                Dostawca
+                                                Vendor
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'barcode'}
@@ -230,7 +230,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                 onClick={() => navigate('/app?tab=tytul_barcode')}
                                                 variant="tertiary"
                                             >
-                                                Tytuł + Barcode
+                                                Title + Barcode
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'sku_barcode'}
@@ -244,20 +244,20 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                     </div>
                                 </Box>
 
-                                {/* Komunikat o skanowaniu */}
+                                {/* Scanning message */}
                                 <BlockStack gap="200" inlineAlign="center">
-                                    <Text as="h2" variant="headingLg">Trwa skanowanie...</Text>
+                                    <Text as="h2" variant="headingLg">Scanning in progress...</Text>
                                     <Text as="p" tone="subdued">
-                                        Skanuję arsenał wroga dla kryterium: {
-                                            aktywnyTab === 'tytul' ? 'Tytuł' :
+                                        Scanning for duplicates by criteria: {
+                                            aktywnyTab === 'tytul' ? 'Title' :
                                                 aktywnyTab === 'sku' ? 'SKU' :
-                                                    aktywnyTab === 'tytul_sku' ? 'Tytuł + SKU' :
-                                                        aktywnyTab === 'vendor' ? 'Dostawca' :
+                                                    aktywnyTab === 'tytul_sku' ? 'Title + SKU' :
+                                                        aktywnyTab === 'vendor' ? 'Vendor' :
                                                             aktywnyTab === 'barcode' ? 'Barcode' :
-                                                                aktywnyTab === 'tytul_barcode' ? 'Tytuł + Barcode' :
+                                                                aktywnyTab === 'tytul_barcode' ? 'Title + Barcode' :
                                                                     aktywnyTab === 'sku_barcode' ? 'SKU + Barcode' :
-                                                                        'Nieznane'
-                                        }. Czekaj, kurwa...
+                                                                        'Unknown'
+                                        }. Please wait...
                                     </Text>
                                 </BlockStack>
                             </BlockStack>
@@ -265,12 +265,12 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                     </Card>
                 )}
 
-                {/* --- KOMUNIKAT O BRAKU DUPLIKATÓW --- */}
+                {/* --- NO DUPLICATES MESSAGE --- */}
                 {!czyApkaMieliDane && grupyDuplikatow.length === 0 && (
                     <Card>
                         <Box padding="400">
                             <BlockStack gap="400">
-                                {/* Menu z opcjami wyszukiwania */}
+                                {/* Search options menu */}
                                 <Box padding="0">
                                     <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                                         <InlineStack gap="200" wrap={false} align="center">
@@ -280,7 +280,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                 onClick={() => navigate('/app?tab=tytul')}
                                                 variant="tertiary"
                                             >
-                                                Tytuł
+                                                Title
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'sku'}
@@ -296,7 +296,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                 onClick={() => navigate('/app?tab=tytul_sku')}
                                                 variant="tertiary"
                                             >
-                                                Tytuł + SKU
+                                                Title + SKU
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'vendor'}
@@ -304,7 +304,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                 onClick={() => navigate('/app?tab=vendor')}
                                                 variant="tertiary"
                                             >
-                                                Dostawca
+                                                Vendor
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'barcode'}
@@ -320,7 +320,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                 onClick={() => navigate('/app?tab=tytul_barcode')}
                                                 variant="tertiary"
                                             >
-                                                Tytuł + Barcode
+                                                Title + Barcode
                                             </Button>
                                             <Button
                                                 pressed={aktywnyTab === 'sku_barcode'}
@@ -334,19 +334,19 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                     </div>
                                 </Box>
 
-                                {/* Komunikat o braku duplikatów */}
+                                {/* No duplicates message */}
                                 <BlockStack gap="200" inlineAlign="center">
-                                    <Text as="h2" variant="headingLg">Brak duplikatów w tej kategorii</Text>
+                                    <Text as="h2" variant="headingLg">No duplicates found in this category</Text>
                                     <Text as="p" tone="success">
-                                        Nie znaleziono żadnych duplikatów dla kryterium: {
-                                            aktywnyTab === 'tytul' ? 'Tytuł' :
+                                        No duplicates found for criteria: {
+                                            aktywnyTab === 'tytul' ? 'Title' :
                                                 aktywnyTab === 'sku' ? 'SKU' :
-                                                    aktywnyTab === 'tytul_sku' ? 'Tytuł + SKU' :
-                                                        aktywnyTab === 'vendor' ? 'Dostawca' :
+                                                    aktywnyTab === 'tytul_sku' ? 'Title + SKU' :
+                                                        aktywnyTab === 'vendor' ? 'Vendor' :
                                                             aktywnyTab === 'barcode' ? 'Barcode' :
-                                                                aktywnyTab === 'tytul_barcode' ? 'Tytuł + Barcode' :
+                                                                aktywnyTab === 'tytul_barcode' ? 'Title + Barcode' :
                                                                     aktywnyTab === 'sku_barcode' ? 'SKU + Barcode' :
-                                                                        'Nieznane'
+                                                                        'Unknown'
                                         }
                                     </Text>
                                 </BlockStack>
@@ -355,7 +355,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                     </Card>
                 )}
 
-                {/* --- LISTA DUPLIKATÓW --- */}
+                {/* --- DUPLICATE LIST --- */}
                 {grupyDuplikatow.length > 0 && (
                     <Card>
                         <Form method="post">
@@ -365,11 +365,11 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                             ))}
 
                             <BlockStack gap="400">
-                                {/* Nagłówek z tabami i akcjami */}
+                                {/* Header with tabs and actions */}
                                 <Box padding="400">
                                     <BlockStack gap="400">
                                         <InlineStack align="space-between" blockAlign="center">
-                                            <Text as="h2" variant="headingLg">Wykryto Problematyczne Produkty</Text>
+                                            <Text as="h2" variant="headingLg">Duplicate products detected</Text>
                                             <InlineStack gap="300">
                                                 <Popover
                                                     active={popoverAktywny}
@@ -379,7 +379,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                             onClick={() => setPopoverAktywny(!popoverAktywny)}
                                                             variant="tertiary"
                                                         >
-                                                            Szybkie akcje
+                                                            Quick actions
                                                         </Button>
                                                     }
                                                     onClose={() => setPopoverAktywny(false)}
@@ -396,12 +396,12 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                     submit
                                                     disabled={produktyDoUsuniecia.size === 0 || czyApkaMieliDane}
                                                 >
-                                                    Anihiluj Zaznaczone ({produktyDoUsuniecia.size.toString()})
+                                                    Remove selected ({produktyDoUsuniecia.size.toString()})
                                                 </Button>
                                             </InlineStack>
                                         </InlineStack>
 
-                                        {/* Taby */}
+                                        {/* Tabs */}
                                         <Box padding="0">
                                             <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                                                 <InlineStack gap="200" wrap={false} align="center">
@@ -411,7 +411,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                         onClick={() => navigate('/app?tab=tytul')}
                                                         variant="tertiary"
                                                     >
-                                                        Tytuł
+                                                        Title
                                                     </Button>
                                                     <Button
                                                         pressed={aktywnyTab === 'sku'}
@@ -427,7 +427,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                         onClick={() => navigate('/app?tab=tytul_sku')}
                                                         variant="tertiary"
                                                     >
-                                                        Tytuł + SKU
+                                                        Title + SKU
                                                     </Button>
                                                     <Button
                                                         pressed={aktywnyTab === 'vendor'}
@@ -435,7 +435,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                         onClick={() => navigate('/app?tab=vendor')}
                                                         variant="tertiary"
                                                     >
-                                                        Dostawca
+                                                        Vendor
                                                     </Button>
                                                     <Button
                                                         pressed={aktywnyTab === 'barcode'}
@@ -451,7 +451,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                         onClick={() => navigate('/app?tab=tytul_barcode')}
                                                         variant="tertiary"
                                                     >
-                                                        Tytuł + Barcode
+                                                        Title + Barcode
                                                     </Button>
                                                     <Button
                                                         pressed={aktywnyTab === 'sku_barcode'}
@@ -468,7 +468,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                 </Box>
 
                                 <ResourceList
-                                    resourceName={{ singular: 'przypadek duplikacji', plural: 'przypadki duplikacji' }}
+                                    resourceName={{ singular: 'duplicate case', plural: 'duplicate cases' }}
                                     items={grupyDuplikatow}
                                     renderItem={(grupa, id) => {
                                         const { oryginal, duplikatyDoUsuniecia } = grupa;
@@ -482,10 +482,10 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                             <Thumbnail source={oryginal.urlObrazka || ''} alt="" />
                                                             <BlockStack>
                                                                 <Text as="span" variant="bodyMd" fontWeight="bold">{oryginal.tytul}</Text>
-                                                                <Text as="span" tone="subdued">Oryginał (Najstarszy)</Text>
+                                                                <Text as="span" tone="subdued">Original (oldest)</Text>
                                                                 {grupa.zduplikowanaWartosc && (
                                                                     <Text as="span" tone="subdued">
-                                                                        Współdzielone {aktywnyTab === 'sku' ? 'SKU' : aktywnyTab === 'vendor' ? 'Dostawca' : 'Wartość'}: "{grupa.zduplikowanaWartosc}"
+                                                                        Shared {aktywnyTab === 'sku' ? 'SKU' : aktywnyTab === 'vendor' ? 'Vendor' : 'Value'}: "{grupa.zduplikowanaWartosc}"
                                                                     </Text>
                                                                 )}
                                                             </BlockStack>
@@ -498,10 +498,10 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                                 disabled={czyApkaMieliDane}
                                                                 onClick={() => usunOryginal(grupa)}
                                                             >
-                                                                Usuń oryginał
+                                                                Remove original
                                                             </Button>
                                                             <Icon source={DuplicateIcon} />
-                                                            <Text as="span" tone="subdued">{duplikatyDoUsuniecia.length} duplikatów</Text>
+                                                            <Text as="span" tone="subdued">{duplikatyDoUsuniecia.length} duplicates</Text>
                                                             <div style={{ transform: jestOtwarty ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }}>
                                                                 <Icon source={ChevronDownIcon} />
                                                             </div>
@@ -514,7 +514,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                             <InlineStack align="space-between">
                                                                 <InlineStack gap="200" blockAlign="center">
                                                                     <Icon source={DuplicateIcon} />
-                                                                    <Text as="span" variant="headingMd">Klony do usunięcia:</Text>
+                                                                    <Text as="span" variant="headingMd">Clones to remove:</Text>
                                                                 </InlineStack>
                                                                 <Popover
                                                                     active={aktywnePopovery.has(grupa.oryginal.id)}
@@ -534,7 +534,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                                             }}
                                                                             variant="tertiary"
                                                                         >
-                                                                            Opcje zaznaczania
+                                                                            Selection options
                                                                         </Button>
                                                                     }
                                                                     onClose={() => setAktywnePopovery(prev => {
@@ -548,12 +548,12 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                                         actionRole="menuitem"
                                                                         items={[
                                                                             {
-                                                                                content: 'Zaznacz wszystkie w tej grupie',
+                                                                                content: 'Select all in this group',
                                                                                 icon: CheckIcon,
                                                                                 onAction: () => zaznaczWszystkieWGrupie(grupa)
                                                                             },
                                                                             {
-                                                                                content: 'Odznacz wszystkie w tej grupie',
+                                                                                content: 'Deselect all in this group',
                                                                                 icon: DisabledIcon,
                                                                                 onAction: () => {
                                                                                     const idWszystkichDuplikatow = grupa.duplikatyDoUsuniecia.map(p => p.id);
@@ -565,7 +565,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                                                 }
                                                                             },
                                                                             {
-                                                                                content: 'Zaznacz najnowsze',
+                                                                                content: 'Select newest',
                                                                                 icon: SortDescendingIcon,
                                                                                 onAction: () => {
                                                                                     const najnowszy = [...grupa.duplikatyDoUsuniecia].sort(
@@ -577,7 +577,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                                                 }
                                                                             },
                                                                             {
-                                                                                content: 'Zaznacz najstarsze',
+                                                                                content: 'Select oldest',
                                                                                 icon: SortAscendingIcon,
                                                                                 onAction: () => {
                                                                                     const najstarszy = [...grupa.duplikatyDoUsuniecia].sort(
@@ -609,7 +609,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                                         <Thumbnail source={duplikat.urlObrazka || ''} alt="" />
                                                                         <BlockStack>
                                                                             <Text as="span">{duplikat.tytul}</Text>
-                                                                            <Text as="span" tone="subdued">Utworzono: {new Date(duplikat.dataUtworzenia).toLocaleDateString()}</Text>
+                                                                            <Text as="span" tone="subdued">Created: {new Date(duplikat.dataUtworzenia).toLocaleDateString()}</Text>
                                                                         </BlockStack>
                                                                     </InlineStack>
                                                                 </div>
