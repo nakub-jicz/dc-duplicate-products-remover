@@ -8,7 +8,7 @@ import {
 import {
     DuplicateIcon, ChevronDownIcon, DeleteIcon,
     ProductFilledIcon, DuplicateIcon as DuplicateIconAlt, AlertDiamondIcon,
-    MenuHorizontalIcon, BarcodeIcon
+    MenuHorizontalIcon, BarcodeIcon, CheckIcon, DisabledIcon, SortAscendingIcon, SortDescendingIcon
 } from '@shopify/polaris-icons';
 
 interface UsuwaczUIProps {
@@ -270,11 +270,15 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                     <Box padding="400" background='bg-surface-secondary'>
                                                         <BlockStack gap="400">
                                                             <InlineStack align="space-between">
-                                                                <Text as="span" variant="headingMd">Klony do usunięcia:</Text>
+                                                                <InlineStack gap="200" blockAlign="center">
+                                                                    <Icon source={DuplicateIcon} />
+                                                                    <Text as="span" variant="headingMd">Klony do usunięcia:</Text>
+                                                                </InlineStack>
                                                                 <Popover
                                                                     active={aktywnePopovery.has(grupa.oryginal.id)}
                                                                     activator={
                                                                         <Button
+                                                                            icon={MenuHorizontalIcon}
                                                                             onClick={() => {
                                                                                 setAktywnePopovery(prev => {
                                                                                     const nowy = new Set(prev);
@@ -303,10 +307,12 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                                         items={[
                                                                             {
                                                                                 content: 'Zaznacz wszystkie w tej grupie',
+                                                                                icon: CheckIcon,
                                                                                 onAction: () => zaznaczWszystkieWGrupie(grupa)
                                                                             },
                                                                             {
                                                                                 content: 'Odznacz wszystkie w tej grupie',
+                                                                                icon: DisabledIcon,
                                                                                 onAction: () => {
                                                                                     const idWszystkichDuplikatow = grupa.duplikatyDoUsuniecia.map(p => p.id);
                                                                                     setProduktyDoUsuniecia(stan => {
@@ -318,6 +324,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                                             },
                                                                             {
                                                                                 content: 'Zaznacz najnowsze',
+                                                                                icon: SortDescendingIcon,
                                                                                 onAction: () => {
                                                                                     const najnowszy = [...grupa.duplikatyDoUsuniecia].sort(
                                                                                         (a, b) => new Date(b.dataUtworzenia).getTime() - new Date(a.dataUtworzenia).getTime()
@@ -329,6 +336,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                                                             },
                                                                             {
                                                                                 content: 'Zaznacz najstarsze',
+                                                                                icon: SortAscendingIcon,
                                                                                 onAction: () => {
                                                                                     const najstarszy = [...grupa.duplikatyDoUsuniecia].sort(
                                                                                         (a, b) => new Date(a.dataUtworzenia).getTime() - new Date(b.dataUtworzenia).getTime()
