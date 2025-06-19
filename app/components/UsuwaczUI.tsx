@@ -1,13 +1,14 @@
 import { useState, useCallback, useEffect } from 'react';
 import type { GrupaZduplikowanychProduktow } from '../types/produkty';
-import { Form } from '@remix-run/react';
+import { Form, useNavigate } from '@remix-run/react';
 import {
     Page, Card, BlockStack, Button, ResourceList, Thumbnail, Text, Checkbox,
-    Box, InlineStack, Collapsible, Icon, InlineGrid
+    Box, InlineStack, Collapsible, Icon, InlineGrid, Tabs, Popover, ActionList
 } from "@shopify/polaris";
 import {
     DuplicateIcon, ChevronDownIcon, DeleteIcon,
-    ProductFilledIcon, DuplicateIcon as DuplicateIconAlt, AlertDiamondIcon
+    ProductFilledIcon, DuplicateIcon as DuplicateIconAlt, AlertDiamondIcon,
+    MenuHorizontalIcon
 } from '@shopify/polaris-icons';
 
 interface UsuwaczUIProps {
@@ -22,8 +23,18 @@ interface UsuwaczUIProps {
 }
 
 export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, statystyki }: UsuwaczUIProps) {
-    const [otwarteId, setOtwarteId] = useState<Set<string>>(new Set());
+    const navigate = useNavigate();
     const [produktyDoUsuniecia, setProduktyDoUsuniecia] = useState<Set<string>>(new Set());
+    const [rozwinieteId, setRozwinieteId] = useState<Set<string>>(new Set());
+    const [popoverAktywny, setPopoverAktywny] = useState(false);
+
+    // Definicja tabów
+    const taby = [
+        { id: 'tytul', content: 'Tytuł' },
+        { id: 'sku', content: 'SKU' },
+        { id: 'tytul_sku', content: 'Tytuł + SKU' },
+        { id: 'vendor', content: 'Dostawca' }
+    ];
 
     // Reset zaznaczonych produktów po pomyślnym usunięciu
     useEffect(() => {
@@ -45,7 +56,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
 
     const przelaczWidocznosc = useCallback((id: string, e: React.MouseEvent) => {
         e.stopPropagation();
-        setOtwarteId(poprzednieId => {
+        setRozwinieteId(poprzednieId => {
             const noweId = new Set(poprzednieId);
             if (noweId.has(id)) {
                 noweId.delete(id);
@@ -60,6 +71,44 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
         const idWszystkichDuplikatow = grupa.duplikatyDoUsuniecia.map(p => p.id);
         setProduktyDoUsuniecia(stan => new Set([...stan, ...idWszystkichDuplikatow]));
     };
+
+    // Szybkie akcje
+    const rozwinWszystko = () => {
+        const wszystkieId = grupyDuplikatow.map(grupa => grupa.oryginal.id);
+        setRozwinieteId(new Set(wszystkieId));
+    };
+
+    const zwinWszystko = () => {
+        setRozwinieteId(new Set());
+    };
+
+    const zaznaczWszystko = () => {
+        const wszystkieDuplikaty = grupyDuplikatow.flatMap(grupa => grupa.duplikatyDoUsuniecia.map(p => p.id));
+        setProduktyDoUsuniecia(new Set(wszystkieDuplikaty));
+    };
+
+    const odznaczWszystko = () => {
+        setProduktyDoUsuniecia(new Set());
+    };
+
+    const akcje = [
+        {
+            content: 'Rozwiń wszystko',
+            onAction: rozwinWszystko,
+        },
+        {
+            content: 'Zwiń wszystko',
+            onAction: zwinWszystko,
+        },
+        {
+            content: 'Zaznacz wszystko',
+            onAction: zaznaczWszystko,
+        },
+        {
+            content: 'Odznacz wszystko',
+            onAction: odznaczWszystko,
+        },
+    ];
 
     return (
         <Page title="Anihilator Duplikatów" subtitle="Chirurgiczna precyzja w eliminacji cyfrowego ścierwa.">
@@ -131,7 +180,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                     </Card>
                 )}
 
-                {/* --- NOWA, ZAJAEBISTA LISTA ZWIJANA --- */}
+                {/* --- NOWA, ZAJAEBISTA LISTA Z TABAMI --- */}
                 {grupyDuplikatow.length > 0 && (
                     <Card>
                         <Form method="post">
@@ -141,13 +190,47 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                             ))}
 
                             <BlockStack gap="0">
+                                {/* Nagłówek z tabami i akcjami */}
                                 <Box padding="400">
-                                    <InlineStack align="space-between" blockAlign="center">
-                                        <Text as="h2" variant="headingLg">Wykryto Problematyczne Produkty</Text>
-                                        <Button variant="primary" tone="critical" submit disabled={produktyDoUsuniecia.size === 0} loading={czyApkaMieliDane}>
-                                            Anihiluj Zaznaczone ({produktyDoUsuniecia.size.toString()})
-                                        </Button>
-                                    </InlineStack>
+                                    <BlockStack gap="400">
+                                        <InlineStack align="space-between" blockAlign="center">
+                                            <Text as="h2" variant="headingLg">Wykryto Problematyczne Produkty</Text>
+                                            <InlineStack gap="300">
+                                                <Popover
+                                                    active={popoverAktywny}
+                                                    activator={
+                                                        <Button
+                                                            icon={MenuHorizontalIcon}
+                                                            onClick={() => setPopoverAktywny(!popoverAktywny)}
+                                                            variant="tertiary"
+                                                        >
+                                                            Szybkie akcje
+                                                        </Button>
+                                                    }
+                                                    onClose={() => setPopoverAktywny(false)}
+                                                    preferredPosition="below"
+                                                >
+                                                    <ActionList
+                                                        actionRole="menuitem"
+                                                        items={akcje}
+                                                    />
+                                                </Popover>
+                                                <Button variant="primary" tone="critical" submit disabled={produktyDoUsuniecia.size === 0} loading={czyApkaMieliDane}>
+                                                    Anihiluj Zaznaczone ({produktyDoUsuniecia.size.toString()})
+                                                </Button>
+                                            </InlineStack>
+                                        </InlineStack>
+
+                                        {/* Taby */}
+                                        <Tabs
+                                            tabs={taby}
+                                            selected={taby.findIndex(tab => tab.id === aktywnyTab)}
+                                            onSelect={(selectedTabIndex) => {
+                                                const wybranyTab = taby[selectedTabIndex];
+                                                navigate(`/app?tab=${wybranyTab.id}`);
+                                            }}
+                                        />
+                                    </BlockStack>
                                 </Box>
 
                                 <ResourceList
@@ -155,7 +238,7 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
                                     items={grupyDuplikatow}
                                     renderItem={(grupa, id) => {
                                         const { oryginal, duplikatyDoUsuniecia } = grupa;
-                                        const jestOtwarty = otwarteId.has(oryginal.id);
+                                        const jestOtwarty = rozwinieteId.has(oryginal.id);
 
                                         return (
                                             <li style={{ borderTop: '1px solid var(--p-color-border)', listStyle: 'none' }}>
