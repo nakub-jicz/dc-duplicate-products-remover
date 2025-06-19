@@ -169,22 +169,185 @@ export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, staty
 
                 {/* --- KOMUNIKAT O SKANOWANIU --- */}
                 {czyApkaMieliDane && grupyDuplikatow.length === 0 && (
-                    <Card><Box padding="400"><Text as="p" tone='subdued'>Skanuję arsenał wroga... Czekaj, kurwa...</Text></Box></Card>
+                    <Card>
+                        <Box padding="400">
+                            <BlockStack gap="400">
+                                {/* Menu z opcjami wyszukiwania */}
+                                <Box padding="0">
+                                    <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                                        <InlineStack gap="200" wrap={false} align="center">
+                                            <Button
+                                                pressed={aktywnyTab === 'tytul'}
+                                                icon={ProductFilledIcon}
+                                                onClick={() => navigate('/app?tab=tytul')}
+                                                variant="tertiary"
+                                            >
+                                                Tytuł
+                                            </Button>
+                                            <Button
+                                                pressed={aktywnyTab === 'sku'}
+                                                icon={BarcodeIcon}
+                                                onClick={() => navigate('/app?tab=sku')}
+                                                variant="tertiary"
+                                            >
+                                                SKU
+                                            </Button>
+                                            <Button
+                                                pressed={aktywnyTab === 'tytul_sku'}
+                                                icon={DuplicateIconAlt}
+                                                onClick={() => navigate('/app?tab=tytul_sku')}
+                                                variant="tertiary"
+                                            >
+                                                Tytuł + SKU
+                                            </Button>
+                                            <Button
+                                                pressed={aktywnyTab === 'vendor'}
+                                                icon={AlertDiamondIcon}
+                                                onClick={() => navigate('/app?tab=vendor')}
+                                                variant="tertiary"
+                                            >
+                                                Dostawca
+                                            </Button>
+                                            <Button
+                                                pressed={aktywnyTab === 'barcode'}
+                                                icon={BarcodeIcon}
+                                                onClick={() => navigate('/app?tab=barcode')}
+                                                variant="tertiary"
+                                            >
+                                                Barcode
+                                            </Button>
+                                            <Button
+                                                pressed={aktywnyTab === 'tytul_barcode'}
+                                                icon={DuplicateIconAlt}
+                                                onClick={() => navigate('/app?tab=tytul_barcode')}
+                                                variant="tertiary"
+                                            >
+                                                Tytuł + Barcode
+                                            </Button>
+                                            <Button
+                                                pressed={aktywnyTab === 'sku_barcode'}
+                                                icon={DuplicateIconAlt}
+                                                onClick={() => navigate('/app?tab=sku_barcode')}
+                                                variant="tertiary"
+                                            >
+                                                SKU + Barcode
+                                            </Button>
+                                        </InlineStack>
+                                    </div>
+                                </Box>
+
+                                {/* Komunikat o skanowaniu */}
+                                <BlockStack gap="200" inlineAlign="center">
+                                    <Text as="h2" variant="headingLg">Trwa skanowanie...</Text>
+                                    <Text as="p" tone="subdued">
+                                        Skanuję arsenał wroga dla kryterium: {
+                                            aktywnyTab === 'tytul' ? 'Tytuł' :
+                                                aktywnyTab === 'sku' ? 'SKU' :
+                                                    aktywnyTab === 'tytul_sku' ? 'Tytuł + SKU' :
+                                                        aktywnyTab === 'vendor' ? 'Dostawca' :
+                                                            aktywnyTab === 'barcode' ? 'Barcode' :
+                                                                aktywnyTab === 'tytul_barcode' ? 'Tytuł + Barcode' :
+                                                                    aktywnyTab === 'sku_barcode' ? 'SKU + Barcode' :
+                                                                        'Nieznane'
+                                        }. Czekaj, kurwa...
+                                    </Text>
+                                </BlockStack>
+                            </BlockStack>
+                        </Box>
+                    </Card>
                 )}
 
                 {/* --- KOMUNIKAT O BRAKU DUPLIKATÓW --- */}
                 {!czyApkaMieliDane && grupyDuplikatow.length === 0 && (
                     <Card>
                         <Box padding="400">
-                            <BlockStack gap="200" inlineAlign="center">
-                                <Text as="h2" variant="headingLg">Jesteś Czysty!</Text>
-                                <Text as="p" tone="success">Nie znaleziono żadnych duplikatów. Twój sklep jest w zajebistej kondycji. Możesz iść na piwo.</Text>
+                            <BlockStack gap="400">
+                                {/* Menu z opcjami wyszukiwania */}
+                                <Box padding="0">
+                                    <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                                        <InlineStack gap="200" wrap={false} align="center">
+                                            <Button
+                                                pressed={aktywnyTab === 'tytul'}
+                                                icon={ProductFilledIcon}
+                                                onClick={() => navigate('/app?tab=tytul')}
+                                                variant="tertiary"
+                                            >
+                                                Tytuł
+                                            </Button>
+                                            <Button
+                                                pressed={aktywnyTab === 'sku'}
+                                                icon={BarcodeIcon}
+                                                onClick={() => navigate('/app?tab=sku')}
+                                                variant="tertiary"
+                                            >
+                                                SKU
+                                            </Button>
+                                            <Button
+                                                pressed={aktywnyTab === 'tytul_sku'}
+                                                icon={DuplicateIconAlt}
+                                                onClick={() => navigate('/app?tab=tytul_sku')}
+                                                variant="tertiary"
+                                            >
+                                                Tytuł + SKU
+                                            </Button>
+                                            <Button
+                                                pressed={aktywnyTab === 'vendor'}
+                                                icon={AlertDiamondIcon}
+                                                onClick={() => navigate('/app?tab=vendor')}
+                                                variant="tertiary"
+                                            >
+                                                Dostawca
+                                            </Button>
+                                            <Button
+                                                pressed={aktywnyTab === 'barcode'}
+                                                icon={BarcodeIcon}
+                                                onClick={() => navigate('/app?tab=barcode')}
+                                                variant="tertiary"
+                                            >
+                                                Barcode
+                                            </Button>
+                                            <Button
+                                                pressed={aktywnyTab === 'tytul_barcode'}
+                                                icon={DuplicateIconAlt}
+                                                onClick={() => navigate('/app?tab=tytul_barcode')}
+                                                variant="tertiary"
+                                            >
+                                                Tytuł + Barcode
+                                            </Button>
+                                            <Button
+                                                pressed={aktywnyTab === 'sku_barcode'}
+                                                icon={DuplicateIconAlt}
+                                                onClick={() => navigate('/app?tab=sku_barcode')}
+                                                variant="tertiary"
+                                            >
+                                                SKU + Barcode
+                                            </Button>
+                                        </InlineStack>
+                                    </div>
+                                </Box>
+
+                                {/* Komunikat o braku duplikatów */}
+                                <BlockStack gap="200" inlineAlign="center">
+                                    <Text as="h2" variant="headingLg">Brak duplikatów w tej kategorii</Text>
+                                    <Text as="p" tone="success">
+                                        Nie znaleziono żadnych duplikatów dla kryterium: {
+                                            aktywnyTab === 'tytul' ? 'Tytuł' :
+                                                aktywnyTab === 'sku' ? 'SKU' :
+                                                    aktywnyTab === 'tytul_sku' ? 'Tytuł + SKU' :
+                                                        aktywnyTab === 'vendor' ? 'Dostawca' :
+                                                            aktywnyTab === 'barcode' ? 'Barcode' :
+                                                                aktywnyTab === 'tytul_barcode' ? 'Tytuł + Barcode' :
+                                                                    aktywnyTab === 'sku_barcode' ? 'SKU + Barcode' :
+                                                                        'Nieznane'
+                                        }
+                                    </Text>
+                                </BlockStack>
                             </BlockStack>
                         </Box>
                     </Card>
                 )}
 
-                {/* --- NOWA, ZAJAEBISTA LISTA Z TABAMI --- */}
+                {/* --- LISTA DUPLIKATÓW --- */}
                 {grupyDuplikatow.length > 0 && (
                     <Card>
                         <Form method="post">

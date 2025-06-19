@@ -54,6 +54,12 @@ export function znajdzWskazDuplikaty(produkty: ProduktInfo[], kryterium: string)
       return znajdzDuplikatyPoTytuleISKU(produkty);
     case 'vendor':
       return znajdzDuplikatyPoVendorze(produkty);
+    case 'barcode':
+      return znajdzDuplikatyPoBarcode(produkty);
+    case 'tytul_barcode':
+      return znajdzDuplikatyPoTytuleIBarcode(produkty);
+    case 'sku_barcode':
+      return znajdzDuplikatyPoSKUIBarcode(produkty);
     default:
       throw new Error(`Nieznane kryterium: ${kryterium}`);
   }
@@ -128,6 +134,67 @@ function znajdzDuplikatyPoVendorze(produkty: ProduktInfo[]): GrupaZduplikowanych
   }
 
   return przetworzGrupy(grupyTymczasowe, 'vendor');
+}
+
+function znajdzDuplikatyPoBarcode(produkty: ProduktInfo[]): GrupaZduplikowanychProduktow[] {
+  const mapaBarcode: { [barcode: string]: ProduktInfo[] } = {};
+
+  // Iterujemy po wszystkich produktach i ich wariantach
+  for (const produkt of produkty) {
+    if (produkt.variants) {
+      for (const wariant of produkt.variants) {
+        if (wariant.barcode && wariant.barcode.trim()) {
+          const barcode = wariant.barcode.trim().toLowerCase();
+          if (!mapaBarcode[barcode]) {
+            mapaBarcode[barcode] = [];
+          }
+          mapaBarcode[barcode].push(produkt);
+        }
+      }
+    }
+  }
+
+  return przetworzGrupy(mapaBarcode, 'barcode');
+}
+
+function znajdzDuplikatyPoTytuleIBarcode(produkty: ProduktInfo[]): GrupaZduplikowanychProduktow[] {
+  const mapaZlozona: { [klucz: string]: ProduktInfo[] } = {};
+
+  for (const produkt of produkty) {
+    if (produkt.variants) {
+      for (const wariant of produkt.variants) {
+        if (wariant.barcode && wariant.barcode.trim()) {
+          const klucz = produkt.tytul.trim().toLowerCase() + '|' + wariant.barcode.trim().toLowerCase();
+          if (!mapaZlozona[klucz]) {
+            mapaZlozona[klucz] = [];
+          }
+          mapaZlozona[klucz].push(produkt);
+        }
+      }
+    }
+  }
+
+  return przetworzGrupy(mapaZlozona, 'tytul_barcode');
+}
+
+function znajdzDuplikatyPoSKUIBarcode(produkty: ProduktInfo[]): GrupaZduplikowanychProduktow[] {
+  const mapaZlozona: { [klucz: string]: ProduktInfo[] } = {};
+
+  for (const produkt of produkty) {
+    if (produkt.variants) {
+      for (const wariant of produkt.variants) {
+        if (wariant.sku && wariant.sku.trim() && wariant.barcode && wariant.barcode.trim()) {
+          const klucz = wariant.sku.trim().toLowerCase() + '|' + wariant.barcode.trim().toLowerCase();
+          if (!mapaZlozona[klucz]) {
+            mapaZlozona[klucz] = [];
+          }
+          mapaZlozona[klucz].push(produkt);
+        }
+      }
+    }
+  }
+
+  return przetworzGrupy(mapaZlozona, 'sku_barcode');
 }
 
 function przetworzGrupy(grupyTymczasowe: { [klucz: string]: ProduktInfo[] }, typKryterium: string): GrupaZduplikowanychProduktow[] {
