@@ -1,0 +1,36 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "2cd731183a2b400f2a1aa2c8c37d1e77"
+name = "DC Duplicate Products Remover"
+handle = "dc-duplicate-products-remover"
+application_url = "https://wants-thumbnail-architect-im.trycloudflare.com"
+embedded = true
+
+[build]
+include_config_on_deploy = true
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2025-04"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "/webhooks/app/uninstalled"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/scopes_update" ]
+  uri = "/webhooks/app/scopes_update"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_products,write_products"
+
+[auth]
+redirect_urls = [
+  "https://wants-thumbnail-architect-im.trycloudflare.com/auth/callback",
+  "https://wants-thumbnail-architect-im.trycloudflare.com/auth/shopify/callback",
+  "https://wants-thumbnail-architect-im.trycloudflare.com/api/auth/callback"
+]
+
+[pos]
+embedded = false
