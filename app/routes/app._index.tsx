@@ -9,7 +9,7 @@ import { Frame, Toast } from "@shopify/polaris";
 import type { AdminApiContext } from "@shopify/shopify-app-remix/server";
 
 import { authenticate } from "../shopify.server";
-import { AnihilatorUI } from "../components/UsuwaczUI";
+import { UsuwaczUI } from "../components/UsuwaczUI";
 import {
   pobierzWszystkieProdukty,
   znajdzWskazDuplikaty,
@@ -21,14 +21,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
   const url = new URL(request.url);
 
-  // Wyszukujemy, czy user chce szukać po czymś konkretnym. Jeśli nie, to domyślnie bierzemy 'tytul'.
-  const kryteriaParam = url.searchParams.get('kryteria') || 'tytul';
+  // Wyszukujemy, jaki tab jest aktywny. Jeśli nie ma, to domyślnie 'tytul'.
+  const aktywnyTab = url.searchParams.get('tab') || 'tytul';
 
   // Niech nasz serwis zrobi całą brudną robotę.
   const produkty = await pobierzWszystkieProdukty(admin as AdminApiContext);
 
-  // Teraz, kiedy mamy produkty, pogrupujmy je.
-  const grupyDuplikatow = znajdzWskazDuplikaty(produkty);
+  // Teraz, kiedy mamy produkty, pogrupujmy je według aktywnego taba.
+  const grupyDuplikatow = znajdzWskazDuplikaty(produkty, aktywnyTab);
 
   // Generujemy statystyki
   const statystyki = {
@@ -40,10 +40,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     ),
   };
 
-  // Zwracamy pogrupowane duplikaty, kryteria i statystyki
+  // Zwracamy pogrupowane duplikaty, aktywny tab i statystyki
   return json({
     grupyDuplikatow,
-    kryteriaPoczatkowe: kryteriaParam.split(','),
+    aktywnyTab,
     statystyki
   });
 };
@@ -55,17 +55,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const actionType = formData.get('_action');
 
   switch (actionType) {
-    // AKCJA 'ZNAJDŹ' - Użytkownik chce odświeżyć listę z nowymi kryteriami
-    case 'znajdz': {
-      const kryteria = formData.getAll('kryteria').join(',');
-      const params = new URLSearchParams();
-      if (kryteria) {
-        params.set('kryteria', kryteria);
-      }
-      // Robimy przekierowanie z nowymi parametrami w URL, co z automatu odpali `loader` na nowo.
-      return redirect(`/app?${params.toString()}`);
-    }
-
     // AKCJA 'USUŃ' - Czas na rozpierdol
     case 'usun': {
       const idDoUsuniecia = formData.getAll('idDoUsuniecia[]').map(String);
@@ -86,7 +75,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 // Komponent Kontroler. Spina wszystko w całość. Jest klejem.
 export default function StronaUsuwacza() {
-  const { grupyDuplikatow, kryteriaPoczatkowe, statystyki } = useLoaderData<typeof loader>();
+  const { grupyDuplikatow, aktywnyTab, statystyki } = useLoaderData<typeof loader>();
   const nawigacja = useNavigation();
   const [searchParams] = useSearchParams();
   const app = useAppBridge();
@@ -104,10 +93,10 @@ export default function StronaUsuwacza() {
 
   return (
     <Frame>
-      <AnihilatorUI
+      <UsuwaczUI
         grupyDuplikatow={grupyDuplikatow}
         czyApkaMieliDane={czyApkaMieliDane}
-        kryteriaPoczatkowe={kryteriaPoczatkowe}
+        aktywnyTab={aktywnyTab}
         statystyki={statystyki}
       />
       {showToast && (

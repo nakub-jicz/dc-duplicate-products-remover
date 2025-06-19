@@ -3,17 +3,17 @@ import type { GrupaZduplikowanychProduktow } from '../types/produkty';
 import { Form } from '@remix-run/react';
 import {
     Page, Card, BlockStack, Button, ResourceList, Thumbnail, Text, Checkbox,
-    Box, InlineStack, Collapsible, Icon, ChoiceList, InlineGrid
+    Box, InlineStack, Collapsible, Icon, InlineGrid
 } from "@shopify/polaris";
 import {
     DuplicateIcon, ChevronDownIcon, DeleteIcon,
     ProductFilledIcon, DuplicateIcon as DuplicateIconAlt, AlertDiamondIcon
 } from '@shopify/polaris-icons';
 
-interface AnihilatorUIProps {
+interface UsuwaczUIProps {
     grupyDuplikatow: GrupaZduplikowanychProduktow[];
     czyApkaMieliDane: boolean;
-    kryteriaPoczatkowe: string[];
+    aktywnyTab: string;
     statystyki: {
         liczbaProduktow: number;
         liczbaGrupDuplikatow: number;
@@ -21,10 +21,9 @@ interface AnihilatorUIProps {
     };
 }
 
-export function AnihilatorUI({ grupyDuplikatow, czyApkaMieliDane, kryteriaPoczatkowe, statystyki }: AnihilatorUIProps) {
+export function UsuwaczUI({ grupyDuplikatow, czyApkaMieliDane, aktywnyTab, statystyki }: UsuwaczUIProps) {
     const [otwarteId, setOtwarteId] = useState<Set<string>>(new Set());
     const [produktyDoUsuniecia, setProduktyDoUsuniecia] = useState<Set<string>>(new Set());
-    const [wybraneKryteria, setWybraneKryteria] = useState<string[]>(kryteriaPoczatkowe);
 
     // Reset zaznaczonych produktów po pomyślnym usunięciu
     useEffect(() => {
@@ -113,33 +112,6 @@ export function AnihilatorUI({ grupyDuplikatow, czyApkaMieliDane, kryteriaPoczat
                             </BlockStack>
                         </Box>
                     </InlineGrid>
-                </Card>
-
-                {/* --- PANEL KONFIGURACJI --- */}
-                <Card>
-                    <Form method="post">
-                        <input type="hidden" name="_action" value="znajdz" />
-                        <Box padding="400">
-                            <BlockStack gap="400">
-                                <ChoiceList
-                                    title="Namierz duplikaty na podstawie:"
-                                    name="kryteria"
-                                    choices={[
-                                        { label: 'Tytuł Produktu', value: 'tytul' },
-                                        // Tu dodasz więcej opcji, jak ogarniesz logikę w serwisie.
-                                    ]}
-                                    selected={wybraneKryteria}
-                                    onChange={setWybraneKryteria}
-                                    allowMultiple
-                                />
-                                <Box>
-                                    <Button variant="primary" submit loading={czyApkaMieliDane}>
-                                        Namierz Cele
-                                    </Button>
-                                </Box>
-                            </BlockStack>
-                        </Box>
-                    </Form>
                 </Card>
 
                 {/* --- KOMUNIKAT O SKANOWANIU --- */}

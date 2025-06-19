@@ -14,9 +14,19 @@ const POBIERZ_PRODUKTY_QUERY = `#graphql
         node {
           id
           title
+          vendor
           createdAt
           featuredImage {
             url(transform: {maxWidth: 60, maxHeight: 60})
+          }
+          variants(first: 250) {
+            edges {
+              node {
+                id
+                sku
+                barcode
+              }
+            }
           }
         }
       }
@@ -34,10 +44,24 @@ const USUN_PRODUKT_MUTATION = `#graphql
     }
   }`;
 
-export function znajdzWskazDuplikaty(produkty: ProduktInfo[]): GrupaZduplikowanychProduktow[] {
+export function znajdzWskazDuplikaty(produkty: ProduktInfo[], kryterium: string): GrupaZduplikowanychProduktow[] {
+  switch (kryterium) {
+    case 'tytul':
+      return znajdzDuplikatyPoTytule(produkty);
+    case 'sku':
+      return znajdzDuplikatyPoSKU(produkty);
+    case 'tytul_sku':
+      return znajdzDuplikatyPoTytuleISKU(produkty);
+    case 'vendor':
+      return znajdzDuplikatyPoVendorze(produkty);
+    default:
+      throw new Error(`Nieznane kryterium: ${kryterium}`);
+  }
+}
+
+function znajdzDuplikatyPoTytule(produkty: ProduktInfo[]): GrupaZduplikowanychProduktow[] {
   const grupyTymczasowe: { [klucz: string]: ProduktInfo[] } = {};
 
-  // Krok 1: Grupujemy tak jak wcześniej.
   for (const produkt of produkty) {
     const klucz = produkt.tytul.trim().toLowerCase();
     if (!grupyTymczasowe[klucz]) {
@@ -46,13 +70,73 @@ export function znajdzWskazDuplikaty(produkty: ProduktInfo[]): GrupaZduplikowany
     grupyTymczasowe[klucz].push(produkt);
   }
 
+  return przetworzGrupy(grupyTymczasowe, 'tytul');
+}
+
+function znajdzDuplikatyPoSKU(produkty: ProduktInfo[]): GrupaZduplikowanychProduktow[] {
+  const mapaSKU: { [sku: string]: ProduktInfo[] } = {};
+
+  // Iterujemy po wszystkich produktach i ich wariantach
+  for (const produkt of produkty) {
+    if (produkt.variants) {
+      for (const wariant of produkt.variants) {
+        if (wariant.sku && wariant.sku.trim()) {
+          const sku = wariant.sku.trim().toLowerCase();
+          if (!mapaSKU[sku]) {
+            mapaSKU[sku] = [];
+          }
+          mapaSKU[sku].push(produkt);
+        }
+      }
+    }
+  }
+
+  return przetworzGrupy(mapaSKU, 'sku');
+}
+
+function znajdzDuplikatyPoTytuleISKU(produkty: ProduktInfo[]): GrupaZduplikowanychProduktow[] {
+  const mapaZlozona: { [klucz: string]: ProduktInfo[] } = {};
+
+  for (const produkt of produkty) {
+    if (produkt.variants) {
+      for (const wariant of produkt.variants) {
+        if (wariant.sku && wariant.sku.trim()) {
+          const klucz = produkt.tytul.trim().toLowerCase() + '|' + wariant.sku.trim().toLowerCase();
+          if (!mapaZlozona[klucz]) {
+            mapaZlozona[klucz] = [];
+          }
+          mapaZlozona[klucz].push(produkt);
+        }
+      }
+    }
+  }
+
+  return przetworzGrupy(mapaZlozona, 'tytul_sku');
+}
+
+function znajdzDuplikatyPoVendorze(produkty: ProduktInfo[]): GrupaZduplikowanychProduktow[] {
+  const grupyTymczasowe: { [klucz: string]: ProduktInfo[] } = {};
+
+  for (const produkt of produkty) {
+    if (produkt.vendor) {
+      const klucz = produkt.vendor.trim().toLowerCase();
+      if (!grupyTymczasowe[klucz]) {
+        grupyTymczasowe[klucz] = [];
+      }
+      grupyTymczasowe[klucz].push(produkt);
+    }
+  }
+
+  return przetworzGrupy(grupyTymczasowe, 'vendor');
+}
+
+function przetworzGrupy(grupyTymczasowe: { [klucz: string]: ProduktInfo[] }, typKryterium: string): GrupaZduplikowanychProduktow[] {
   const wynikKoncowy: GrupaZduplikowanychProduktow[] = [];
 
-  // Krok 2: Przetwarzamy każdą grupę, która ma więcej niż 1 produkt.
   for (const klucz in grupyTymczasowe) {
     const grupa = grupyTymczasowe[klucz];
     if (grupa.length > 1) {
-      // Sortujemy produkty w grupie od najstarszego do najnowszego. Czysta władza.
+      // Sortujemy produkty w grupie od najstarszego do najnowszego
       const posortowanaGrupa = [...grupa].sort(
         (a, b) => new Date(a.dataUtworzenia).getTime() - new Date(b.dataUtworzenia).getTime()
       );
@@ -62,6 +146,7 @@ export function znajdzWskazDuplikaty(produkty: ProduktInfo[]): GrupaZduplikowany
       wynikKoncowy.push({
         oryginal: oryginal,
         duplikatyDoUsuniecia: duplikaty,
+        zduplikowanaWartosc: klucz
       });
     }
   }
@@ -93,8 +178,14 @@ export async function pobierzWszystkieProdukty(admin: AdminApiContext): Promise<
     const zmapowaneProdukty = krawedzie.map((krawedz: any) => ({
       id: krawedz.node.id,
       tytul: krawedz.node.title,
+      vendor: krawedz.node.vendor,
       urlObrazka: krawedz.node.featuredImage?.url,
       dataUtworzenia: krawedz.node.createdAt,
+      variants: krawedz.node.variants?.edges?.map((variantEdge: any) => ({
+        id: variantEdge.node.id,
+        sku: variantEdge.node.sku,
+        barcode: variantEdge.node.barcode,
+      })) || []
     }));
 
     wszystkieProdukty = [...wszystkieProdukty, ...zmapowaneProdukty];
@@ -112,23 +203,8 @@ export async function pobierzWszystkieProdukty(admin: AdminApiContext): Promise<
  * Grupuje zebrane produkty wg podanego kryterium (np. 'tytul').
  * To jest mózg analityczny operacji.
  */
-export function pogrupujProdukty(produkty: ProduktInfo[], kryterium: 'tytul' | string): GrupaZduplikowanychProduktow[] {
-  const grupy = produkty.reduce<GrupaZduplikowanychProduktow[]>((akumulator, produkt) => {
-    // Na razie prosta obsługa tylko dla tytułu. Można to rozbudować.
-    const klucz = produkt.tytul.trim().toLowerCase();
-
-    if (!akumulator.find(g => g.oryginal.tytul === klucz)) {
-      akumulator.push({
-        oryginal: produkt,
-        duplikatyDoUsuniecia: [],
-      });
-    }
-    akumulator.find(g => g.oryginal.tytul === klucz)?.duplikatyDoUsuniecia.push(produkt);
-    return akumulator;
-  }, [] as GrupaZduplikowanychProduktow[]);
-
-  // Filtrujemy, żeby zostawić tylko te grupy, gdzie jest co anihilować (więcej niż 1 produkt)
-  return grupy.filter(g => g.duplikatyDoUsuniecia.length > 1);
+export function pogrupujProdukty(produkty: ProduktInfo[], kryterium: string): GrupaZduplikowanychProduktow[] {
+  return znajdzWskazDuplikaty(produkty, kryterium);
 }
 
 /**
