@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { GrupaZduplikowanychProduktow } from '../types/produkty';
 import { Form } from '@remix-run/react';
 import {
@@ -17,6 +17,13 @@ export function AnihilatorUI({ grupyDuplikatow, czyApkaMieliDane, kryteriaPoczat
     const [otwarteId, setOtwarteId] = useState<Set<string>>(new Set());
     const [produktyDoUsuniecia, setProduktyDoUsuniecia] = useState<Set<string>>(new Set());
     const [wybraneKryteria, setWybraneKryteria] = useState<string[]>(kryteriaPoczatkowe);
+
+    // Reset zaznaczonych produktów po pomyślnym usunięciu
+    useEffect(() => {
+        if (czyApkaMieliDane) {
+            setProduktyDoUsuniecia(new Set());
+        }
+    }, [czyApkaMieliDane]);
 
     const obslugaZmianyCheckboxa = useCallback((idProduktu: string, e?: React.MouseEvent) => {
         if (e) {

@@ -78,8 +78,8 @@ export default function StronaUsuwacza() {
   const [searchParams] = useSearchParams();
   const app = useAppBridge();
 
-  const czyApkaMieliDane = nawigacja.state !== 'idle';
   const czyUsunieto = searchParams.get('usunieto') === 'true';
+  const czyApkaMieliDane = nawigacja.state === 'loading' || nawigacja.state === 'submitting';
 
   // Polaris Toast state
   const [showToast, setShowToast] = useState(czyUsunieto);
