@@ -24,6 +24,13 @@ export const shopify = (context: AppLoadContext) =>
       unstable_newEmbeddedAuthStrategy: true,
       removeRest: true,
     },
+    isEmbeddedApp: true,
+    hooks: {
+      afterAuth: async ({ session }) => {
+        // Dodaj dodatkowe działania po autoryzacji
+        console.log("Auth completed for shop:", session.shop);
+      },
+    },
     ...(process.env.SHOP_CUSTOM_DOMAIN
       ? { customShopDomains: [process.env.SHOP_CUSTOM_DOMAIN] }
       : {}),

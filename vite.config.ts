@@ -80,5 +80,11 @@ export default defineConfig({
   },
   build: {
     minify: true,
+    rollupOptions: {
+      external: [
+        "@shopify/shopify-app-remix/adapters/node",
+        "@shopify/shopify-app-remix/adapters/cloudflare"
+      ]
+    }
   },
 });

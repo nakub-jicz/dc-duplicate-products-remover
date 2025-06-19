@@ -1,8 +1,8 @@
 // app/routes/app._index.tsx
 
 import { useEffect, useState } from "react";
-import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/cloudflare";
+import { json, redirect } from "@remix-run/cloudflare";
 import { useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { Frame, Toast } from "@shopify/polaris";

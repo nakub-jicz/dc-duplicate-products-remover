@@ -16,5 +16,14 @@
     "SHOPIFY_APP_URL": "https://dc-remove-duplicates.jakub-okseniuk.workers.dev/",
     "SCOPES": "read_products,write_products",
     "SHOPIFY_API_KEY": "2cd731183a2b400f2a1aa2c8c37d1e77"
-  }
+  },
+  "rules": [
+    {
+      "type": "ESModule",
+      "globs": [
+        "**/*.js",
+        "**/*.mjs"
+      ]
+    }
+  ]
 }
