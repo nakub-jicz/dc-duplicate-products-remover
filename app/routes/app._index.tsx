@@ -8,7 +8,7 @@ import { useAppBridge } from "@shopify/app-bridge-react";
 import { Frame, Toast } from "@shopify/polaris";
 import type { AdminApiContext } from "@shopify/shopify-app-remix/server";
 
-import { authenticate } from "../shopify.server";
+import { shopify } from "../shopify.server";
 import { UsuwaczUI } from "../components/UsuwaczUI";
 import {
   pobierzWszystkieProdukty,
@@ -18,8 +18,8 @@ import {
 } from "../services/produkty.server";
 
 // Loader. Woła serwis, dostaje dane, zwraca. Koniec pierdolenia.
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { admin } = await authenticate.admin(request);
+export const loader = async ({ request, context }: LoaderFunctionArgs) => {
+  const { admin } = await shopify(context).authenticate.admin(request);
   const url = new URL(request.url);
 
   // Wyszukujemy, jaki tab jest aktywny. Jeśli nie ma, to domyślnie 'tytul'.
@@ -50,8 +50,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 // Action. Sprawdza, co ma zrobić i deleguje do serwisu.
-export async function action({ request }: ActionFunctionArgs) {
-  const { admin } = await authenticate.admin(request);
+export async function action({ request, context }: ActionFunctionArgs) {
+  const { admin } = await shopify(context).authenticate.admin(request);
   const formData = await request.formData();
   const action = formData.get('_action');
   const url = new URL(request.url);

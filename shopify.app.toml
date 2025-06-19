@@ -3,7 +3,7 @@
 client_id = "2cd731183a2b400f2a1aa2c8c37d1e77"
 name = "DC Remove Duplicates"
 handle = "dc-remove-duplicates"
-application_url = "https://skins-jpeg-nav-mississippi.trycloudflare.com"
+application_url = "https://dc-remove-duplicates.jakub-okseniuk.workers.dev/"
 embedded = true
 
 [build]
@@ -27,9 +27,9 @@ scopes = "read_products,write_products"
 
 [auth]
 redirect_urls = [
-  "https://skins-jpeg-nav-mississippi.trycloudflare.com/auth/callback",
-  "https://skins-jpeg-nav-mississippi.trycloudflare.com/auth/shopify/callback",
-  "https://skins-jpeg-nav-mississippi.trycloudflare.com/api/auth/callback"
+  "https://dc-remove-duplicates.jakub-okseniuk.workers.dev/auth/callback",
+  "https://dc-remove-duplicates.jakub-okseniuk.workers.dev/auth/shopify/callback",
+  "https://dc-remove-duplicates.jakub-okseniuk.workers.dev/api/auth/callback"
 ]
 
 [pos]

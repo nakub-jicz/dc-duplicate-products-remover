@@ -1,0 +1,20 @@
+{
+  "name": "dc-remove-duplicates",
+  "compatibility_date": "2024-11-11",
+  "main": "./server.ts",
+  "assets": {
+    "directory": "./build/client"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "upload_source_maps": false,
+  "compatibility_flags": [
+    "nodejs_compat_v2"
+  ],
+  "vars": {
+    "SHOPIFY_APP_URL": "https://dc-remove-duplicates.jakub-okseniuk.workers.dev/",
+    "SCOPES": "read_products,write_products",
+    "SHOPIFY_API_KEY": "2cd731183a2b400f2a1aa2c8c37d1e77"
+  }
+}
